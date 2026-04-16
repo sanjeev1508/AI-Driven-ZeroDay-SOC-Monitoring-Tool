@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI SOC — Security Operations Center</title>
+  <meta name="description" content="AI-powered Security Operations Center with real-time log analysis and zero-day threat detection." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css?v=20260416-9" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <div class="logo">
+        <span class="logo-icon">⬡</span>
+        <span class="logo-text">AI<strong>SOC</strong></span>
+      </div>
+      <div class="status-bar">
+        <span class="status-dot" id="conn-status-dot"></span>
+        <span id="conn-status-label">Connecting...</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="metric-chip" id="chip-alerts">
+        <span class="chip-icon">🔔</span>
+        <span id="total-alerts">0</span> Alerts
+      </div>
+      <div class="metric-chip critical" id="chip-critical">
+        <span class="chip-icon">🚨</span>
+        <span id="critical-alerts">0</span> Critical
+      </div>
+      <div class="metric-chip">
+        <span class="chip-icon">🕐</span>
+        <span id="last-update">--:--:--</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h3 class="sidebar-title">ANALYSIS MODE</h3>
+
+      <!-- Mode Selector -->
+      <div class="mode-tabs">
+        <button class="mode-tab active" id="tab-local" onclick="switchMode('local')">
+          <span class="tab-icon">🖥️</span>
+          <span>Own Machine</span>
+        </button>
+      </div>
+
+      <!-- Local Mode Controls -->
+      <div id="local-controls" class="control-section">
+        <p class="section-desc">Collect and analyze logs from <strong>this machine</strong> in real time.</p>
+        <button class="btn btn-primary" id="btn-start-local" onclick="startLocalAnalysis()">
+          <span class="btn-icon">▶</span> Start Analysis
+        </button>
+        <button class="btn btn-danger" id="btn-stop-local" onclick="stopLocalAnalysis()" style="display:none">
+          <span class="btn-icon">■</span> Stop
+        </button>
+        <hr class="divider" />
+        <h4 class="section-label">THREAT INTEL</h4>
+        <button class="btn btn-secondary" onclick="runThreatIntel()">
+          <span class="btn-icon">🕵️</span> Run Threat Update
+        </button>
+        <p class="hint">Scrapes SOCRadar, ZDI, ISC SANS → Qdrant</p>
+        <hr class="divider" />
+        <button class="btn btn-ghost" onclick="clearAlerts()">🗑 Clear Alerts</button>
+      </div>
+
+      <!-- Agent Status Panel -->
+      <div class="agent-status-panel" id="agent-panel">
+        <h4 class="section-label" style="margin-top:24px">AGENT STATUS</h4>
+        <div id="agent-cards"></div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- Live Log Stream -->
+      <section class="panel" id="log-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span class="pulse-dot" id="stream-pulse"></span>
+            Live Log Stream
+          </div>
+          <div class="panel-actions">
+            <button class="btn-icon-only" onclick="clearLogStream()" title="Clear">✕</button>
+            <button class="btn-icon-only" id="btn-pause-stream" onclick="togglePause()" title="Pause">⏸</button>
+          </div>
+        </div>
+        <div class="log-terminal" id="log-terminal">
+          <div class="terminal-placeholder">
+            <span class="placeholder-icon">📡</span>
+            <p>Select a mode and start analysis to see live logs here.</p>
+          </div>
+        </div>
+        <div class="log-footer">
+          <span id="log-count">0 events</span>
+          <span id="stream-mode-label">—</span>
+        </div>
+      </section>
+
+      <!-- Alerts Feed -->
+      <section class="panel" id="alerts-panel">
+        <div class="panel-header">
+          <div class="panel-title">🚨 Security Alerts</div>
+          <div class="panel-actions">
+            <button class="btn-icon-only" onclick="refreshAlerts()" title="Refresh alerts">🔄</button>
+            <select class="filter-select" id="alert-filter" onchange="filterAlerts()">
+              <option value="">All Severities</option>
+              <option value="CRITICAL">Critical</option>
+              <option value="HIGH">High</option>
+              <option value="MEDIUM">Medium</option>
+              <option value="LOW">Low</option>
+            </select>
+          </div>
+        </div>
+        <div id="alerts-container">
+          <div class="empty-state">
+            <span>🛡️</span>
+            <p>No alerts yet. System is clean or pipeline hasn't run.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Right Sidebar (Threat Intel) -->
+    <aside class="threat-sidebar" id="threat-sidebar">
+      <div class="threat-sidebar-header">
+        <h3 class="sidebar-title">🌐 Threat Intel Feed</h3>
+        <button class="btn-icon-only" onclick="loadThreatIntelNews()" title="Refresh">🔄</button>
+      </div>
+      <div class="threat-news-list" id="threat-news-list">
+        <div class="empty-state">
+           <span>⏳</span>
+           <p>Loading threat intel...</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Toast notification -->
+  <div id="toast-container"></div>
+
+  <script src="/static/app.js?v=20260416-2"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+.env
+
+# Runtime data (generated at run time — do not commit)
+*.log
+*.csv
+alerts.json
+
+# Dev / scratch scripts
+_cleanup.py
+
+# OS
+.DS_Store
+Thumbs.db

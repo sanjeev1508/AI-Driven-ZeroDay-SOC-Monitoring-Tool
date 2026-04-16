@@ -1,0 +1,5 @@
+cd 'd:\AI SOC\new'
+
+venv\Scripts\python.exe -m uvicorn backend.main:app --host 0.0.0.0 --port 8001
+
+python add_mock_logs.py
